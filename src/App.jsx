@@ -1,33 +1,56 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+
+import { useEffect } from 'react'
 import './App.css'
+import { useState } from 'react'
+import SingleProduct from './SingleProduct'
 
 function App() {
-  const [count, setCount] = useState(0)
+
+  const [product, setProduct] = useState([])
+  const [item, setItem] = useState([])
+
+  useEffect(()=>{
+    fetch("./FakeData.json")
+      .then(response => response.json())
+      .then(data => setProduct(data))
+  })
+
+  const handleAddCart =(p)=>{
+    // console.log([p]);
+    setItem([p]);
+  }
+
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <div className='main-container flex justify-around'>
+        <div className='card-container'>
+            {
+              product.map((items,index) => <SingleProduct key={index}
+                                                          handleAddCart={handleAddCart}
+                                                          props={items}
+                                                          ></SingleProduct>)
+            }
+        </div>
+
+        <div className='cart-container-list w-96 border-2 border-green-600 m-6 p-5 rounded-xl'>
+          <h1 className='text-2xl font-bold text-center underline'>This is cart container</h1>
+          <div className='flex justify-around font-bold mt-3'>
+              <h2>Name</h2>
+              <p>Price</p>
+          </div>
+          <div>
+            {
+              item.map((pro, index) => (
+                <div key={index} className='flex justify-around font-semibold'>
+                  <h2>{pro.title.slice(0, 10)}</h2>
+                  <p>{pro.price}</p>
+                </div>
+              ))
+            }
+          </div>
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
   )
 }
